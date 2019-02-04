@@ -3,7 +3,7 @@ import tensorflow as tf
 input1 = tf.placeholder(tf.float32)  # placeholder 要指定type
 input2 = tf.placeholder(tf.float32)
 
-# input2 = tf.placeholder(tf.float32,[]) #可以通过[] 指定input的结构
+# input2 = tf_note.placeholder(tf_note.float32,[]) #可以通过[] 指定input的结构
 
 output=tf.multiply(input1,input2)
 

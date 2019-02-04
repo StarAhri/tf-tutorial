@@ -18,7 +18,7 @@ def add_layer(inputs, in_size, out_size, activation_function=None):
     :return: output
     """
     with tf.name_scope('layer'):
-        # 定义 tf 变量
+        # 定义 tf_note 变量
         # Weights 该层网络的参数
         with tf.name_scope("weights"):
             Weights = tf.Variable(tf.random_normal([in_size, out_size]))  # 定义矩阵大写
@@ -52,7 +52,7 @@ noise = np.random.normal(0, 0.05, x_data.shape)  # 均值为0 标准差0.05 与x
 # 定义输出
 y_data = np.square(x_data) - 0.5 + noise
 
-# tf.float32 定义 placeholder 的类型。 [None,1] 定义 shape
+# tf_note.float32 定义 placeholder 的类型。 [None,1] 定义 shape
 # def placeholder(dtype, shape=None, name=None)
 with tf.name_scope("input"):
     xs = tf.placeholder(tf.float32,[None, 1],name='x_input')
@@ -117,7 +117,7 @@ for i in range(1000):
     if i % 50 ==0:
 
 
-        # 输出总体的损失函数，所有的 tf 值得查看都要在 sess.run 中查看
+        # 输出总体的损失函数，所有的 tf_note 值得查看都要在 sess.run 中查看
         # 为什么在此还要传入 feed_dict  惰性实现有关？？
         # print(sess.run(loss,feed_dict={xs:x_data,ys:y_data}))
 

@@ -14,7 +14,7 @@ update=tf.assign(state,new_value)  # 把 new_value 赋值给 state
 init=tf.initialize_all_variables()  # 所有的 tf变量 必须要初始化
 
 with tf.Session() as sess:
-    sess.run(init)     # 初始 tf 变量
+    sess.run(init)     # 初始 tf_note 变量
     for _ in range(3):
         sess.run(update)
         print(sess.run(state))
