@@ -74,9 +74,18 @@ tf.equal 会判断两个张量对应元素是否相等
 correct_prediction=tf.equal(tf.argmax(y,1),tf.argmax(prediction,1))
 
 """
-求准确率
+求准确率 
 tf.cast 强制类型转换 将布尔型转换成 float32 
 tf.reduce_mean 求均值 因为 true 就是1  false 就是0 
+
+"""
+
+"""
+模型训练和求准确率 是完全不同的数据流
+
+模型训练是每次训练100张图, next_batch 会自动按批取数据，如果数据取完会自动从头开始取
+
+求
 
 """
 accuracy=tf.reduce_mean(tf.cast(correct_prediction,tf.float32))
@@ -93,6 +102,9 @@ with tf.Session() as sess:
             batch_xs,batch_ys=mnist.train.next_batch(batch_size)
             sess.run(train_step,feed_dict={x:batch_xs,y:batch_ys})
 
+        """
+        每次求准确率 都是传入相同的数据
+        """
         acc=sess.run(accuracy,feed_dict={x:mnist.test.images,y:mnist.test.labels})
 
         print("Iter"+str(epoch)+"Test Accuracy"+str(acc))

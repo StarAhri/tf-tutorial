@@ -15,11 +15,12 @@ def variable_summaries(var):
     """
     Tensor summaries for exporting information about a model.
     summary 可以模型的一些参数导出。
-
-
     """
     with tf.name_scope("summaries"):
         mean=tf.reduce_mean(var)
+        """
+        scalar 第一个参数是 名字 第二个参数是 值 
+        """
         tf.summary.scalar("mean",mean)
 
         with tf.name_scope("stddev"):
@@ -49,9 +50,16 @@ with tf.name_scope("layer"):
     # 权值
     with tf.name_scope("wights"):
         W = tf.Variable(tf.zeros([784, 10]))
+        """
+        通过 summary 分析权值
+        """
+        variable_summaries(W)
+
     # 偏置值
     with tf.name_scope("biases"):
         b = tf.Variable(tf.zeros([10]))
+        variable_summaries(b)
+
     with tf.name_scope("wx_plus_b"):
         wx_plus_b = tf.matmul(x, W) + b
     # softmax 作为激活函数
@@ -59,8 +67,12 @@ with tf.name_scope("layer"):
         prediction = tf.nn.softmax(wx_plus_b)
 
 # 损失函数
+# loss = tf.reduce_mean(tf.square(y - prediction))
 with tf.name_scope("loss"):
-    loss = tf.reduce_mean(tf.square(y - prediction))
+    loss=tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=y,logits=prediction))
+    # summary 分析
+    tf.summary.scalar("loss",loss)
+
 with tf.name_scope("train"):
     train_step = tf.train.GradientDescentOptimizer(0.2).minimize(loss)
 
@@ -79,6 +91,12 @@ with tf.name_scope("accuracy"):
     # 求准确率  tf.cast 将布尔型转换成 float32 再求平均值
     with tf.name_scope("accuracy"):
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+        tf.summary.scalar("accuracy",accuracy)
+
+"""
+将 summary 合并
+"""
+merged=tf.summary.merge_all()
 
 with tf.Session() as sess:
     sess.run(init)
@@ -92,14 +110,27 @@ with tf.Session() as sess:
     writer = tf.summary.FileWriter("logs/", sess.graph)
 
     # 训练21次  每个批次分别训练
-    for epoch in range(1):
+    for epoch in range(51):
         for batch in range(n_batch):
             # mnist.train.next_batch 获得100个图片及其标签
             batch_xs, batch_ys = mnist.train.next_batch(batch_size)
-            sess.run(train_step, feed_dict={x: batch_xs, y: batch_ys})
+
+            """
+            运行的时候会并行运行 merged 和 train_step
+            """
+            summary,_=sess.run([merged,train_step], feed_dict={x: batch_xs, y: batch_ys})
+            """
+            将summary 写入到 tensorboard 中
+            """
+
+
+        """
+        将summary 写入到 tensorboard 中
+        因为循环了51次，所以你在 tensorboard 中会看到51个点
+        """
+        writer.add_summary(summary,epoch)
 
         acc = sess.run(accuracy, feed_dict={x: mnist.test.images, y: mnist.test.labels})
-
         print("Iter" + str(epoch) + "Test Accuracy" + str(acc))
 
 
