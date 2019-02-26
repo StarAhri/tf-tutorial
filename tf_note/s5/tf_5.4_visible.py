@@ -54,5 +54,25 @@ def variable_summaries(var):
         tf.summary.scalar("min",tf.reduce_min(var)) # 最小值
         tf.summary.histogram("histogram",var) # 直方图
 
+# input 命名空间
 with tf.name_scope("input"):
-    x=tf.placeholder(tf.float32,[None,784])
+    # None 表示可以是任意长度
+    x=tf.placeholder(tf.float32,[None,784],name='x-input')
+    # 正确的标签
+    y=tf.placeholder(tf.float32,[None,10],name='y_input')
+
+with tf.name_scope("input_reshape"):
+    """
+    tf.reshape 会将输入 x 变形
+    """
+    image_shaped_input=tf.reshape(x,[-1,28,28,1])
+
+    """
+    把 image 图片传进去，这样summary 就可以显示了
+    """
+    tf.summary.image("input",image_shaped_input,10)
+
+
+
+for  i in range(max_step):
+    batch_xs,batch_ys=mnist.train.next_batch(100)
